@@ -1,0 +1,63 @@
+/* Foundation */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header */
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+}
+
+/* Main */
+
+main {
+    display: grid;
+    grid-template-columns: 240px 1fr 260px;
+    flex: 1;
+}
+
+/* Area's for Tools, Workspace and Properties */
+
+.tools {
+    padding: 20px;
+    border-right: 1px solid #d6d6d6;
+}
+
+.workspace {
+    padding: 20px;
+    background-color: #eeeeee;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.properties {
+    padding: 20px;
+    border-left: 1px solid #d6d6d6;
+}
+
+/* Workspace Page */
+
+.page {
+    width: 600px;
+    height: 700px;
+    background-color: white;
+}
+
+/* Canvas */
+
+#drawing-canvas {
+    display: block;
+}
