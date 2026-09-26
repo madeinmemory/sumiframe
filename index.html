@@ -24,6 +24,8 @@
 
         <section class="tools">
             <h2>TOOLS</h2>
+            <button id="pen-tool">Pen</button>
+            <button id="eraser-tool">Eraser</button>
 
         </section>
 
@@ -38,12 +40,28 @@
         <section class="properties">
             <h2>PROPERTIES</h2>
 
+        <div class="property-control">
+            <label for="brush-size">Brush Size: <span id="brush-size-value">5px</span></label>
+            <input type="range" id="brush-size" min="1" max="50" value="5">
+        </div>
+
+        <div class="property-control">
+            <label for="brush-color">Brush Color</label>
+            <input type="color" id="brush-color" value="#000000">
+        </div>
+
+        <div class="property-control">
+            <label for="brush-opacity">Opacity: <span id="brush-opacity-value">100%</span></label>
+            <input type="range" id="brush-opacity" min="0" max="100" value="100">
+        </div>
+
         </section>
 
       </main>
         
     <footer>
-
+     <button id="undo-button">Undo</button>
+     <button id="redo-button">Redo</button>
 
     </footer>
     

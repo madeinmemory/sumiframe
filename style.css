@@ -61,3 +61,51 @@ main {
 #drawing-canvas {
     display: block;
 }
+
+/* Properties Control*/
+
+.property-control {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.property-control[type='range'] {
+    width: 100%;
+}
+
+.property-control input[type='range'] {
+    width: 100%;
+    appearance: none;
+    height: 6px;
+    border-radius: 10px;
+    background-color: #d6d6d6;
+    cursor: pointer;
+}
+
+.property-control input[type='range']::-webkit-slider-thumb {
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: #222222;
+    cursor: pointer;
+    transition: transform 0.15s ease;
+}
+
+.property-control input[type='range']::-webkit-slider-thumb:hover {
+    transform: scale(1.15);
+}
+
+.property-control label {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+#brush-color {
+    width: 100%;
+    height: 40px;
+    cursor: pointer;
+}
+
