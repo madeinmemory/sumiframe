@@ -103,9 +103,21 @@ main {
     font-weight: 600;
 }
 
+.property-note {
+    font-size: 12px;
+    line-height: 1.5;
+    opacity: 0.65;
+}
+
 #brush-color {
     width: 100%;
     height: 40px;
     cursor: pointer;
 }
 
+/* Tools */
+
+.tools button.active {
+    background-color: #222222;
+    color: white;
+}

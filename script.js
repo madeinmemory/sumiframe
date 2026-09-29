@@ -12,6 +12,18 @@ const penTool = document.querySelector('#pen-tool');
 const eraserTool = document.querySelector('#eraser-tool');
 const undoButton = document.querySelector('#undo-button');
 const redoButton = document.querySelector('#redo-button');
+const clearCanvasButton = document.querySelector('#clear-canvas');
+const penProperties = document.querySelector('#pen-properties');
+const eraserProperties = document.querySelector('#eraser-properties');
+const eraserSize = document.querySelector('#eraser-size');
+const eraserSizeValue = document.querySelector('#eraser-size-value');
+const textTool = document.querySelector('#text-tool');
+const textProperties = document.querySelector('#text-properties');
+const textSize = document.querySelector('#text-size');
+const textSizeValue = document.querySelector('#text-size-value');
+const textColor = document.querySelector('#text-color');
+const textContent = document.querySelector('#text-content');
+
 
 // Drawing Properties
 
@@ -20,6 +32,9 @@ ctx.lineWidth = 5;
 ctx.lineCap = 'round';
 ctx.lineJoin = 'round';
 ctx.strokeStyle = 'black';
+
+eraserProperties.style.display = 'none';
+textProperties.style.display = 'none';
 
 // Undo/Redo Stack
 
@@ -36,7 +51,18 @@ let lastY = 0;
 let currentTool = 'pen';
 
 canvas.addEventListener('pointerdown', (event) => {
-    saveState();
+    if (currentTool === 'text') {
+        saveState();
+        redoStack.length = 0;
+        ctx.font = `${textSize.value}px Arial`;
+        ctx.fillStyle = textColor.value;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText (textContent.value, event.offsetX, event.offsetY);
+
+        return;
+    }
+    
     redoStack.length = 0;
 
     isDrawing = true;
@@ -45,7 +71,7 @@ canvas.addEventListener('pointerdown', (event) => {
     lastY = event.offsetY;
 });
 
-canvas.addEventListener('pointerup', () => {
+window.addEventListener('pointerup', () => {
      isDrawing = false;
 });
 
@@ -67,7 +93,7 @@ canvas.addEventListener('pointermove', (event) => {
     lastY = y;
 });
 
-// Property Listeners
+// Property Listeners/Inputs
 
 
 brushSize.addEventListener('input', () => {
@@ -88,19 +114,64 @@ brushOpacity.addEventListener('input', () => {
    brushOpacityValue.textContent = `${brushOpacity.value}%`;
 });
 
+
+eraserSize.addEventListener('input', () => {
+    eraserSizeValue.textContent = `${eraserSize.value}px`;
+    ctx.lineWidth = eraserSize.value;
+});
+
+
+textSize.addEventListener('input', () => {
+    textSizeValue.textContent = `${textSize.value}px`;
+})
+
+
+
 // Tool Listeners
 
 penTool.addEventListener('click', () => {
     currentTool = 'pen';
+    penProperties.style.display = 'block';
+    eraserProperties.style.display = 'none';
+    textProperties.style.display = 'none';
+    penTool.classList.add('active');
+    eraserTool.classList.remove('active');
+    textTool.classList.remove('active');
     ctx.globalCompositeOperation = 'source-over';
+    ctx.lineWidth = brushSize.value;
+    ctx.globalAlpha = brushOpacity.value / 100;
 });
 
 
 
 eraserTool.addEventListener('click', () => {
     currentTool = 'eraser';
+    penProperties.style.display = 'none';
+    eraserProperties.style.display = 'block';
+    textProperties.style.display = 'none';
+    eraserTool.classList.add('active');
+    penTool.classList.remove('active');
+    textTool.classList.remove('active');
     ctx.globalCompositeOperation = 'destination-out';
+    ctx.lineWidth = eraserSize.value;
+    ctx.globalAlpha = 1;
 });
+
+textTool.addEventListener('click', () => {
+    currentTool = 'text';
+    penProperties.style.display = 'none';
+    eraserProperties.style.display = 'none';
+    textProperties.style.display = 'block';
+
+    textTool.classList.add('active');
+    penTool.classList.remove('active');
+    eraserTool.classList.remove('active');
+});
+
+
+// Footer Listeners
+
+
 
 undoButton.addEventListener('click', () => {
     if (undoStack.length === 0) {
@@ -124,6 +195,12 @@ redoButton.addEventListener('click', () => {
 
     const nextState = redoStack.pop();
     ctx.putImageData(nextState, 0, 0);
+})
+
+clearCanvasButton.addEventListener('click', () => {
+       saveState();
+       redoStack.length = 0;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 })
 
 

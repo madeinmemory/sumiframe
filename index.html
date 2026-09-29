@@ -24,8 +24,9 @@
 
         <section class="tools">
             <h2>TOOLS</h2>
-            <button id="pen-tool">Pen</button>
+            <button id="pen-tool" class="active">Pen</button>
             <button id="eraser-tool">Eraser</button>
+            <button id="text-tool">Text</button>
 
         </section>
 
@@ -40,6 +41,8 @@
         <section class="properties">
             <h2>PROPERTIES</h2>
 
+            <div id="pen-properties">
+
         <div class="property-control">
             <label for="brush-size">Brush Size: <span id="brush-size-value">5px</span></label>
             <input type="range" id="brush-size" min="1" max="50" value="5">
@@ -53,7 +56,47 @@
         <div class="property-control">
             <label for="brush-opacity">Opacity: <span id="brush-opacity-value">100%</span></label>
             <input type="range" id="brush-opacity" min="0" max="100" value="100">
+               </div>
+
         </div>
+
+    <div id="eraser-properties">
+
+          <div class="property-control">
+            <label for="eraser-size">
+                Eraser Size: <span id="eraser-size-value">20px</span>
+            </label>
+             <input type="range" id="eraser-size" min="1" max="100" value="20">
+          </div>
+
+    </div>
+
+          <div id="text-properties">
+
+              <div class="property-control">
+                 <label for="text-size">TextSize: <span id="text-size-value">24px</span></label>
+
+                   <input type="range" id="text-size" min="10" max="72" value="24">
+              </div>
+
+              <div class="property-control">
+                 <label for="text-color">Text Color</label>
+                 <input type="color" id="text-color" value="#000000">
+
+              </div>
+
+              <div class="property-control">
+                 <label for="text-content">Text</label>
+                 <input type="text" id="text-content" placeholder="Enter text...">
+
+              </div>
+
+                <p class="property-note">Choose your text properties, then click anywhere on the canvas to place your text.</p>
+
+              </div>
+
+          </div>
+        
 
         </section>
 
@@ -62,6 +105,7 @@
     <footer>
      <button id="undo-button">Undo</button>
      <button id="redo-button">Redo</button>
+     <button id="clear-canvas">Clear Canvas</button>
 
     </footer>
     
