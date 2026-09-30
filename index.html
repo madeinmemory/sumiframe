@@ -1,135 +1,136 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SumiFrame</title>
 
-<title>SumiFrame</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="script.js" defer></script>
+  </head>
 
-<link rel="stylesheet" href="style.css">
-<script src="script.js" defer></script>
-
-</head>
-
-<body>
-
+  <body>
     <header>
-        <h1>SumiFrame</h1>
-        <p>UNTITLED PROJECT</p>
-
+      <h1>SumiFrame</h1>
+      <p>UNTITLED PROJECT</p>
     </header>
 
-      <main>
+    <main>
+      <section class="tools">
+        <h2>TOOLS</h2>
+        <button id="pen-tool" class="active">Pen</button>
+        <button id="eraser-tool">Eraser</button>
+        <button id="text-tool">Text</button>
+        <button id="reference-tool">Reference</button>
+      </section>
 
-        <section class="tools">
-            <h2>TOOLS</h2>
-            <button id="pen-tool" class="active">Pen</button>
-            <button id="eraser-tool">Eraser</button>
-            <button id="text-tool">Text</button>
-
-        </section>
-
-        <section class="workspace">
-            <div class="page">
-                <canvas id="drawing-canvas" width="600" height="700"></canvas>
-
-            </div>
-
-        </section>
-
-        <section class="properties">
-            <h2>PROPERTIES</h2>
-
-            <div id="pen-properties">
-
-        <div class="property-control">
-            <label for="brush-size">Brush Size: <span id="brush-size-value">5px</span></label>
-            <input type="range" id="brush-size" min="1" max="50" value="5">
+      <section class="workspace">
+        <div class="page">
+          <img id="reference-image" alt="" />
+          <canvas id="drawing-canvas" width="600" height="700"></canvas>
         </div>
+      </section>
 
-        <div class="property-control">
-            <label for="brush-color">Brush Color</label>
-            <input type="color" id="brush-color" value="#000000">
-        </div>
+      <section class="properties">
+        <h2>PROPERTIES</h2>
 
-        <div class="property-control">
-            <label for="brush-opacity">Opacity: <span id="brush-opacity-value">100%</span></label>
-            <input type="range" id="brush-opacity" min="0" max="100" value="100">
-               </div>
-
-        </div>
-
-    <div id="eraser-properties">
+        <div id="pen-properties">
+          <div class="property-control">
+            <label for="brush-size"
+              >Brush Size: <span id="brush-size-value">5px</span></label
+            >
+            <input type="range" id="brush-size" min="1" max="50" value="5" />
+          </div>
 
           <div class="property-control">
+            <label for="brush-color">Brush Color</label>
+            <input type="color" id="brush-color" value="#000000" />
+          </div>
+
+          <div class="property-control">
+            <label for="brush-opacity"
+              >Opacity: <span id="brush-opacity-value">100%</span></label
+            >
+            <input
+              type="range"
+              id="brush-opacity"
+              min="0"
+              max="100"
+              value="100"
+            />
+          </div>
+        </div>
+
+        <div id="eraser-properties">
+          <div class="property-control">
             <label for="eraser-size">
-                Eraser Size: <span id="eraser-size-value">20px</span>
+              Eraser Size: <span id="eraser-size-value">20px</span>
             </label>
-             <input type="range" id="eraser-size" min="1" max="100" value="20">
+            <input type="range" id="eraser-size" min="1" max="100" value="20" />
+          </div>
+        </div>
+
+        <div id="text-properties">
+          <div class="property-control">
+            <label for="text-size"
+              >TextSize: <span id="text-size-value">24px</span></label
+            >
+            <input type="range" id="text-size" min="10" max="72" value="24" />
           </div>
 
-    </div>
-
-          <div id="text-properties">
-
-              <div class="property-control">
-                 <label for="text-size">TextSize: <span id="text-size-value">24px</span></label>
-
-                   <input type="range" id="text-size" min="10" max="72" value="24">
-              </div>
-
-              <div class="property-control">
-                 <label for="text-color">Text Color</label>
-                 <input type="color" id="text-color" value="#000000">
-
-              </div>
-
-              <div class="property-control">
-                 <label for="text-content">Text</label>
-                 <input type="text" id="text-content" placeholder="Enter text...">
-
-              </div>
-
-                <p class="property-note">Choose your text properties, then click anywhere on the canvas to place your text.</p>
-
-              </div>
-
+          <div class="property-control">
+            <label for="text-color">Text Color</label>
+            <input type="color" id="text-color" value="#000000" />
           </div>
-        
 
-        </section>
+          <div class="property-control">
+            <label for="text-content">Text</label>
+            <input type="text" id="text-content" placeholder="Enter text..." />
+          </div>
 
-      </main>
-        
+          <p class="property-note">
+            Choose your text properties, then click anywhere on the canvas to
+            place your text.
+          </p>
+        </div>
+
+        <div id="reference-properties">
+          <div class="property-control">
+            <label for="reference-upload">Reference Image</label>
+            <input
+              type="file"
+              id="reference-upload"
+              accept="image/png, image/jpeg, image/webp"
+            />
+          </div>
+
+          <div class="property-control">
+            <label for="reference-opacity"
+              >Reference Opacity:
+              <span id="reference-opacity-value">50%</span></label
+            >
+            <input
+              type="range"
+              id="reference-opacity"
+              min="0"
+              max="100"
+              value="50"
+            />
+          </div>
+
+          <div class="property-control">
+            <button id="toggle-reference">No Reference</button>
+            <button id="remove-reference">Remove Reference</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
     <footer>
-     <button id="undo-button">Undo</button>
-     <button id="redo-button">Redo</button>
-     <button id="clear-canvas">Clear Canvas</button>
-
+      <button id="undo-button">Undo</button>
+      <button id="redo-button">Redo</button>
+      <button id="clear-canvas">Clear Canvas</button>
     </footer>
-    
-    
-</body>
-
-
+  </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
