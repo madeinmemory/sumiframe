@@ -32,6 +32,8 @@ const referenceOpacityValue = document.querySelector(
 );
 const toggleReference = document.querySelector("#toggle-reference");
 const removeReference = document.querySelector("#remove-reference");
+const addPanelButton = document.querySelector("#add-panel");
+const panelList = document.querySelector("#panel-list");
 
 // Drawing Properties
 
@@ -49,7 +51,7 @@ referenceProperties.style.display = "none";
 const undoStack = [];
 const redoStack = [];
 
-// Canvas Drawing
+// Canvas Drawing/State Variables
 
 let isDrawing = false;
 let lastX = 0;
@@ -57,6 +59,18 @@ let lastY = 0;
 let currentTool = "pen";
 let referenceVisible = true;
 let referenceExists = false;
+let panelCount = 1;
+
+const panels = [
+  {
+    id: 1,
+    name: "Panel 1",
+    canvasState: null,
+  },
+];
+let activePanelId = 1;
+
+// Drawing
 
 canvas.addEventListener("pointerdown", (event) => {
   if (currentTool === "text") {
@@ -234,6 +248,47 @@ referenceTool.addEventListener("click", () => {
   penTool.classList.remove("active");
   eraserTool.classList.remove("active");
   textTool.classList.remove("active");
+});
+
+addPanelButton.addEventListener("click", () => {
+  panelCount++;
+
+  const panelData = {
+    id: panelCount,
+    name: `Panel ${panelCount}`,
+    canvasState: null,
+  };
+  panels.push(panelData);
+  console.log(panels);
+
+  const newPanel = document.createElement("button");
+  newPanel.textContent = `Panel ${panelCount}`;
+  newPanel.classList.add("panel-item");
+  newPanel.dataset.panelId = panelData.id;
+  panelList.appendChild(newPanel);
+});
+
+panelList.addEventListener("click", (event) => {
+  if (!event.target.classList.contains("panel-item")) {
+    return;
+  }
+  const currentPanel = panels.find((panel) => {
+    return panel.id === activePanelId;
+  });
+
+  currentPanel.canvasState = ctx.getImageData(
+    0,
+    0,
+    canvas.width,
+    canvas.height,
+  );
+
+  const activePanel = document.querySelector(".panel-item.active");
+  activePanel.classList.remove("active");
+  event.target.classList.add("active");
+
+  activePanelId = Number(event.target.dataset.panelId);
+  console.log(activePanelId);
 });
 
 // Footer Listeners
