@@ -251,6 +251,16 @@ referenceTool.addEventListener("click", () => {
 });
 
 addPanelButton.addEventListener("click", () => {
+  const currentPanel = panels.find((panel) => {
+    return panel.id === activePanelId;
+  });
+
+  currentPanel.canvasState = ctx.getImageData(
+    0,
+    0,
+    canvas.width,
+    canvas.height,
+  );
   panelCount++;
 
   const panelData = {
@@ -266,6 +276,12 @@ addPanelButton.addEventListener("click", () => {
   newPanel.classList.add("panel-item");
   newPanel.dataset.panelId = panelData.id;
   panelList.appendChild(newPanel);
+
+  const activePanel = document.querySelector(".panel-item.active");
+  activePanel.classList.remove("active");
+  newPanel.classList.add("active");
+  activePanelId = panelData.id;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 });
 
 panelList.addEventListener("click", (event) => {
@@ -288,6 +304,15 @@ panelList.addEventListener("click", (event) => {
   event.target.classList.add("active");
 
   activePanelId = Number(event.target.dataset.panelId);
+
+  const newPanel = panels.find((panel) => {
+    return panel.id === activePanelId;
+  });
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  if (newPanel.canvasState !== null) {
+    ctx.putImageData(newPanel.canvasState, 0, 0);
+  }
   console.log(activePanelId);
 });
 
