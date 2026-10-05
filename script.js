@@ -34,6 +34,9 @@ const toggleReference = document.querySelector("#toggle-reference");
 const removeReference = document.querySelector("#remove-reference");
 const addPanelButton = document.querySelector("#add-panel");
 const panelList = document.querySelector("#panel-list");
+const deletePanelButton = document.querySelector("#delete-panel");
+const movePanelLeftButton = document.querySelector("#move-panel-left");
+const movePanelRightButton = document.querySelector("#move-panel-right");
 
 // Drawing Properties
 
@@ -250,6 +253,8 @@ referenceTool.addEventListener("click", () => {
   textTool.classList.remove("active");
 });
 
+// Panel Listeners
+
 addPanelButton.addEventListener("click", () => {
   const currentPanel = panels.find((panel) => {
     return panel.id === activePanelId;
@@ -269,7 +274,6 @@ addPanelButton.addEventListener("click", () => {
     canvasState: null,
   };
   panels.push(panelData);
-  console.log(panels);
 
   const newPanel = document.createElement("button");
   newPanel.textContent = `Panel ${panelCount}`;
@@ -313,7 +317,77 @@ panelList.addEventListener("click", (event) => {
   if (newPanel.canvasState !== null) {
     ctx.putImageData(newPanel.canvasState, 0, 0);
   }
+  undoStack.length = 0;
+  redoStack.length = 0;
   console.log(activePanelId);
+});
+
+deletePanelButton.addEventListener("click", () => {
+  if (panels.length === 1) {
+    return;
+  }
+
+  const shouldDelete = confirm(
+    "Are you sure you want to delete this panel? This action cannot be undone.",
+  );
+  if (!shouldDelete) {
+    return;
+  }
+  const panelIndex = panels.findIndex((panel) => {
+    return panel.id === activePanelId;
+  });
+  panels.splice(panelIndex, 1);
+
+  const activePanelButton = document.querySelector(".panel-item.active");
+  activePanelButton.remove();
+
+  const nextPanel = panels[panelIndex] || panels[panelIndex - 1];
+  activePanelId = nextPanel.id;
+
+  const nextPanelButton = document.querySelector(
+    `[data-panel-id="${nextPanel.id}"]`,
+  );
+  nextPanelButton.classList.add("active");
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  if (nextPanel.canvasState !== null) {
+    ctx.putImageData(nextPanel.canvasState, 0, 0);
+  }
+
+  undoStack.length = 0;
+  redoStack.length = 0;
+});
+
+movePanelLeftButton.addEventListener("click", () => {
+  const panelIndex = panels.findIndex((panel) => {
+    return panel.id === activePanelId;
+  });
+
+  if (panelIndex === 0) {
+    return;
+  }
+  const previousPanel = panels[panelIndex - 1];
+  panels[panelIndex - 1] = panels[panelIndex];
+  panels[panelIndex] = previousPanel;
+
+  const activePanelButton = document.querySelector(".panel-item.active");
+  const previousPanelButton = activePanelButton.previousElementSibling;
+  panelList.insertBefore(activePanelButton, previousPanelButton);
+});
+
+movePanelRightButton.addEventListener("click", () => {
+  const panelIndex = panels.findIndex((panel) => {
+    return panel.id === activePanelId;
+  });
+  if (panelIndex === panels.length - 1) {
+    return;
+  }
+  const nextPanel = panels[panelIndex + 1];
+  panels[panelIndex + 1] = panels[panelIndex];
+  panels[panelIndex] = nextPanel;
+
+  const activePanelButton = document.querySelector(".panel-item.active");
+  const nextPanelButton = activePanelButton.nextElementSibling;
+  panelList.insertBefore(nextPanelButton, activePanelButton);
 });
 
 // Footer Listeners
