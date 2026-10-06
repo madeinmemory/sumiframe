@@ -1,5 +1,5 @@
-// Constants
-
+// CONSTANTS
+// Canvas and Context
 const canvas = document.querySelector("#drawing-canvas");
 const ctx = canvas.getContext("2d");
 const brushSize = document.querySelector("#brush-size");
@@ -7,21 +7,33 @@ const brushSizeValue = document.querySelector("#brush-size-value");
 const brushColor = document.querySelector("#brush-color");
 const brushOpacity = document.querySelector("#brush-opacity");
 const brushOpacityValue = document.querySelector("#brush-opacity-value");
+
+// Tool Constants
+
 const penTool = document.querySelector("#pen-tool");
 const eraserTool = document.querySelector("#eraser-tool");
 const undoButton = document.querySelector("#undo-button");
 const redoButton = document.querySelector("#redo-button");
 const clearCanvasButton = document.querySelector("#clear-canvas");
 const penProperties = document.querySelector("#pen-properties");
+
+// Eraser Tool
+
 const eraserProperties = document.querySelector("#eraser-properties");
 const eraserSize = document.querySelector("#eraser-size");
 const eraserSizeValue = document.querySelector("#eraser-size-value");
+
+// Text Tool
+
 const textTool = document.querySelector("#text-tool");
 const textProperties = document.querySelector("#text-properties");
 const textSize = document.querySelector("#text-size");
 const textSizeValue = document.querySelector("#text-size-value");
 const textColor = document.querySelector("#text-color");
 const textContent = document.querySelector("#text-content");
+
+// Reference Tool
+
 const referenceTool = document.querySelector("#reference-tool");
 const referenceProperties = document.querySelector("#reference-properties");
 const referenceUpload = document.querySelector("#reference-upload");
@@ -32,12 +44,16 @@ const referenceOpacityValue = document.querySelector(
 );
 const toggleReference = document.querySelector("#toggle-reference");
 const removeReference = document.querySelector("#remove-reference");
+
+// Panel/Page Constants
+
 const addPanelButton = document.querySelector("#add-panel");
 const panelList = document.querySelector("#panel-list");
 const deletePanelButton = document.querySelector("#delete-panel");
 const movePanelLeftButton = document.querySelector("#move-panel-left");
 const movePanelRightButton = document.querySelector("#move-panel-right");
-
+const addPageButton = document.querySelector("#add-page");
+const pageList = document.querySelector("#page-list");
 // Drawing Properties
 
 ctx.lineWidth = 5;
@@ -63,15 +79,28 @@ let currentTool = "pen";
 let referenceVisible = true;
 let referenceExists = false;
 let panelCount = 1;
+let activePanelId = 1;
 
-const panels = [
+let panels = [
   {
     id: 1,
     name: "Panel 1",
     canvasState: null,
   },
 ];
-let activePanelId = 1;
+
+let pageCount = 1;
+let activePageId = 1;
+
+const pages = [
+  {
+    id: 1,
+    name: "Page 1",
+    panels: panels,
+    activePanelId: 1,
+    panelCount: 1,
+  },
+];
 
 // Drawing
 
@@ -388,6 +417,92 @@ movePanelRightButton.addEventListener("click", () => {
   const activePanelButton = document.querySelector(".panel-item.active");
   const nextPanelButton = activePanelButton.nextElementSibling;
   panelList.insertBefore(nextPanelButton, activePanelButton);
+});
+
+// Page Listeners
+
+addPageButton.addEventListener("click", () => {
+  pageCount++;
+  const pageData = {
+    id: pageCount,
+    name: `Page ${pageCount}`,
+    panels: [
+      {
+        id: 1,
+        name: "Panel 1",
+        canvasState: null,
+      },
+    ],
+    activePanelId: 1,
+    panelCount: 1,
+  };
+  pages.push(pageData);
+
+  const newPage = document.createElement("button");
+  newPage.textContent = `Page ${pageCount}`;
+  newPage.classList.add("page-item");
+  newPage.dataset.pageId = pageData.id;
+  pageList.appendChild(newPage);
+});
+
+pageList.addEventListener("click", (event) => {
+  if (!event.target.classList.contains("page-item")) {
+    return;
+  }
+  const currentPanel = panels.find((panel) => {
+    return panel.id === activePanelId;
+  });
+
+  currentPanel.canvasState = ctx.getImageData(
+    0,
+    0,
+    canvas.width,
+    canvas.height,
+  );
+
+  const currentPage = pages.find((page) => {
+    return page.id === activePageId;
+  });
+
+  currentPage.activePanelId = activePanelId;
+  currentPage.panelCount = panelCount;
+
+  const activePage = document.querySelector(".page-item.active");
+  activePage.classList.remove("active");
+  event.target.classList.add("active");
+
+  activePageId = Number(event.target.dataset.pageId);
+
+  const newPage = pages.find((page) => {
+    return page.id === activePageId;
+  });
+
+  panels = newPage.panels;
+  activePanelId = newPage.activePanelId;
+  panelCount = newPage.panelCount;
+
+  panelList.innerHTML = "";
+
+  panels.forEach((panel) => {
+    const panelButton = document.createElement("button");
+    panelButton.textContent = panel.name;
+    panelButton.classList.add("panel-item");
+    panelButton.dataset.panelId = panel.id;
+
+    if (panel.id === activePanelId) {
+      panelButton.classList.add("active");
+    }
+    panelList.appendChild(panelButton);
+  });
+  const newPanel = panels.find((panel) => {
+    return panel.id === activePanelId;
+  });
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  if (newPanel.canvasState !== null) {
+    ctx.putImageData(newPanel.canvasState, 0, 0);
+  }
+  undoStack.length = 0;
+  redoStack.length = 0;
 });
 
 // Footer Listeners
