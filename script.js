@@ -54,6 +54,9 @@ const movePanelLeftButton = document.querySelector("#move-panel-left");
 const movePanelRightButton = document.querySelector("#move-panel-right");
 const addPageButton = document.querySelector("#add-page");
 const pageList = document.querySelector("#page-list");
+const deletePageButton = document.querySelector("#delete-page");
+const movePageLeftButton = document.querySelector("#move-page-left");
+const movePageRightButton = document.querySelector("#move-page-right");
 // Drawing Properties
 
 ctx.lineWidth = 5;
@@ -505,6 +508,97 @@ pageList.addEventListener("click", (event) => {
   redoStack.length = 0;
 });
 
+deletePageButton.addEventListener("click", () => {
+  if (pages.length === 1) {
+    return;
+  }
+  const shouldDelete = confirm(
+    "Are you sure you want to delete this page? This Action cannot be undone.",
+  );
+  if (!shouldDelete) {
+    return;
+  }
+  const pageIndex = pages.findIndex((page) => {
+    return page.id === activePageId;
+  });
+  pages.splice(pageIndex, 1);
+
+  const activePageButton = document.querySelector(".page-item.active");
+  activePageButton.remove();
+
+  const nextPage = pages[pageIndex] || pages[pageIndex - 1];
+  activePageId = nextPage.id;
+
+  const nextPageButton = document.querySelector(
+    `[data-page-id="${activePageId}"]`,
+  );
+  nextPageButton.classList.add("active");
+
+  panels = nextPage.panels;
+  activePanelId = nextPage.activePanelId;
+  panelCount = nextPage.panelCount;
+
+  panelList.innerHTML = "";
+
+  panels.forEach((panel) => {
+    const panelButton = document.createElement("button");
+
+    panelButton.textContent = panel.name;
+    panelButton.classList.add("panel-item");
+    panelButton.dataset.panelId = panel.id;
+
+    if (panel.id === activePanelId) {
+      panelButton.classList.add("active");
+    }
+    panelList.appendChild(panelButton);
+  });
+  const nextPanel = panels.find((panel) => {
+    return panel.id === activePanelId;
+  });
+
+  ctx.clearRect(0, 0, canvas.width, canvas.length);
+
+  if (nextPanel.canvasState !== null) {
+    ctx.putImageData(nextPanel.canvasState, 0, 0);
+  }
+
+  undoStack.length = 0;
+  redoStack.length = 0;
+});
+
+movePageLeftButton.addEventListener("click", () => {
+  const pageIndex = pages.findIndex((page) => {
+    return page.id === activePageId;
+  });
+  if (pageIndex === 0) {
+    return;
+  }
+  const previousPage = pages[pageIndex - 1];
+
+  pages[pageIndex - 1] = pages[pageIndex];
+  pages[pageIndex] = previousPage;
+
+  const activePageButton = document.querySelector(".page-item.active");
+  const previousPageButton = activePageButton.previousElementSibling;
+  pageList.insertBefore(activePageButton, previousPageButton);
+});
+
+movePageRightButton.addEventListener("click", () => {
+  const pageIndex = pages.findIndex((page) => {
+    return page.id === activePageId;
+  });
+  if (pageIndex === pages.length - 1) {
+    return;
+  }
+  const nextPage = pages[pageIndex + 1];
+
+  pages[pageIndex + 1] = pages[pageIndex];
+  pages[pageIndex] = nextPage;
+
+  const activePageButton = document.querySelector(".page-item.active");
+  const nextPageButton = activePageButton.nextElementSibling;
+  pageList.insertBefore(nextPageButton, activePageButton);
+});
 // Footer Listeners
 
 undoButton.addEventListener("click", () => {
