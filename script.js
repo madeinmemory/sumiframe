@@ -57,6 +57,13 @@ const pageList = document.querySelector("#page-list");
 const deletePageButton = document.querySelector("#delete-page");
 const movePageLeftButton = document.querySelector("#move-page-left");
 const movePageRightButton = document.querySelector("#move-page-right");
+
+// Saving and Loading
+
+const saveProjectButton = document.querySelector("#save-project");
+const loadProjectButton = document.querySelector("#load-project");
+const loadProjectFile = document.querySelector("#load-project-file");
+
 // Drawing Properties
 
 ctx.lineWidth = 5;
@@ -95,7 +102,7 @@ let panels = [
 let pageCount = 1;
 let activePageId = 1;
 
-const pages = [
+let pages = [
   {
     id: 1,
     name: "Page 1",
@@ -598,6 +605,173 @@ movePageRightButton.addEventListener("click", () => {
   const activePageButton = document.querySelector(".page-item.active");
   const nextPageButton = activePageButton.nextElementSibling;
   pageList.insertBefore(nextPageButton, activePageButton);
+});
+
+// Saving and Loading Listeners
+
+function imageDataToDataURL(imageData) {
+  const tempCanvas = document.createElement("canvas");
+  const tempCtx = tempCanvas.getContext("2d");
+
+  tempCanvas.width = imageData.width;
+  tempCanvas.height = imageData.height;
+  tempCtx.putImageData(imageData, 0, 0);
+
+  return tempCanvas.toDataURL("image/png");
+}
+
+saveProjectButton.addEventListener("click", () => {
+  const currentPanel = panels.find((panel) => {
+    return panel.id === activePanelId;
+  });
+  currentPanel.canvasState = ctx.getImageData(
+    0,
+    0,
+    canvas.width,
+    canvas.height,
+  );
+
+  const currentPage = pages.find((page) => {
+    return page.id === activePageId;
+  });
+
+  currentPage.activePanelId = activePanelId;
+  currentPage.panelCount = panelCount;
+
+  const projectData = {
+    activePageId: activePageId,
+    pageCount: pageCount,
+
+    pages: pages.map((page) => {
+      return {
+        id: page.id,
+        name: page.name,
+        activePanelId: page.activePanelId,
+        panelCount: page.panelCount,
+
+        panels: page.panels.map((panel) => {
+          return {
+            id: panel.id,
+            name: panel.name,
+            canvasState:
+              panel.canvasState === null
+                ? null
+                : imageDataToDataURL(panel.canvasState),
+          };
+        }),
+      };
+    }),
+  };
+  const projectJSON = JSON.stringify(projectData);
+
+  const projectBlob = new Blob([projectJSON], {
+    type: "application/json",
+  });
+  const projectURL = URL.createObjectURL(projectBlob);
+
+  const downloadLink = document.createElement("a");
+  downloadLink.href = projectURL;
+  downloadLink.download = "sumiframe-project.json";
+  downloadLink.click();
+
+  URL.revokeObjectURL(projectURL);
+});
+
+function dataURLToImageData(dataURL) {
+  return new Promise((resolve) => {
+    const image = new Image();
+
+    image.addEventListener("load", () => {
+      const tempCanvas = document.createElement("canvas");
+      const tempCtx = tempCanvas.getContext("2d");
+      tempCanvas.width = image.width;
+      tempCanvas.height = image.height;
+      tempCtx.drawImage(image, 0, 0);
+
+      const imageData = tempCtx.getImageData(
+        0,
+        0,
+        tempCanvas.width,
+        tempCanvas.height,
+      );
+      resolve(imageData);
+    });
+    image.src = dataURL;
+  });
+}
+
+loadProjectButton.addEventListener("click", () => {
+  loadProjectFile.value = "";
+  loadProjectFile.click();
+});
+
+loadProjectFile.addEventListener("change", async () => {
+  console.log("FILE CHANGE FIRED!!!!!!!");
+  const file = loadProjectFile.files[0];
+
+  if (!file) {
+    return;
+  }
+
+  const projectText = await file.text();
+  const loadedProject = JSON.parse(projectText);
+
+  for (const page of loadedProject.pages) {
+    for (const panel of page.panels) {
+      if (panel.canvasState !== null) {
+        panel.canvasState = await dataURLToImageData(panel.canvasState);
+      }
+    }
+  }
+  pages = loadedProject.pages;
+  pageCount = loadedProject.pageCount;
+  activePageId = loadedProject.activePageId;
+
+  const loadedPage = pages.find((page) => {
+    return page.id === activePageId;
+  });
+  panels = loadedPage.panels;
+  activePanelId = loadedPage.activePanelId;
+  panelCount = loadedPage.panelCount;
+
+  pageList.innerHTML = "";
+
+  pages.forEach((page) => {
+    const pageButton = document.createElement("button");
+
+    pageButton.textContent = page.name;
+    pageButton.classList.add("page-item");
+    pageButton.dataset.pageId = page.id;
+
+    if (page.id === activePageId) {
+      pageButton.classList.add("active");
+    }
+    pageList.appendChild(pageButton);
+  });
+
+  panelList.innerHTML = "";
+
+  panels.forEach((panel) => {
+    const panelButton = document.createElement("button");
+
+    panelButton.textContent = panel.name;
+    panelButton.classList.add("panel-item");
+    panelButton.dataset.panelId = panel.id;
+
+    if (panel.id === activePanelId) {
+      panelButton.classList.add("active");
+    }
+    panelList.appendChild(panelButton);
+  });
+  const loadedPanel = panels.find((panel) => {
+    return panel.id === activePanelId;
+  });
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  if (loadedPanel.canvasState !== null) {
+    ctx.putImageData(loadedPanel.canvasState, 0, 0);
+  }
+  undoStack.length = 0;
+  redoStack.length = 0;
 });
 // Footer Listeners
 
