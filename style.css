@@ -67,6 +67,13 @@ main {
   z-index: -1;
 }
 
+.preview-canvas {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
 /* Properties Control*/
 
 .property-control {
@@ -145,6 +152,14 @@ main {
   color: white;
 }
 
+.preview-panel {
+  min-height: 100px;
+  border: 2px solid #222222;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 /* Pages */
 
 .page-section {
@@ -168,4 +183,20 @@ main {
 .page-item.active {
   background-color: #222222;
   color: white;
+}
+
+#page-preview.layout-1 {
+  grid-template-columns: 1fr;
+}
+
+#page-preview.layout-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+#page-preview.layout-3 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+#page-preview.layout-3 .preview-panel:first-child {
+  grid-column: 1 / -1;
 }

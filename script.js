@@ -57,12 +57,18 @@ const pageList = document.querySelector("#page-list");
 const deletePageButton = document.querySelector("#delete-page");
 const movePageLeftButton = document.querySelector("#move-page-left");
 const movePageRightButton = document.querySelector("#move-page-right");
+const pagePreview = document.querySelector("#page-preview");
 
 // Saving and Loading
 
 const saveProjectButton = document.querySelector("#save-project");
 const loadProjectButton = document.querySelector("#load-project");
 const loadProjectFile = document.querySelector("#load-project-file");
+
+// Exporting
+
+const exportPanelButton = document.querySelector("#export-panel");
+const exportPageButton = document.querySelector("#export-page");
 
 // Drawing Properties
 
@@ -123,6 +129,7 @@ canvas.addEventListener("pointerdown", (event) => {
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText(textContent.value, event.offsetX, event.offsetY);
+    renderPagePreview();
 
     return;
   }
@@ -141,7 +148,10 @@ canvas.addEventListener("pointerdown", (event) => {
 });
 
 window.addEventListener("pointerup", () => {
-  isDrawing = false;
+  if (isDrawing) {
+    isDrawing = false;
+    renderPagePreview();
+  }
 });
 
 canvas.addEventListener("pointermove", (event) => {
@@ -325,6 +335,7 @@ addPanelButton.addEventListener("click", () => {
   newPanel.classList.add("active");
   activePanelId = panelData.id;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  renderPagePreview();
 });
 
 panelList.addEventListener("click", (event) => {
@@ -394,6 +405,7 @@ deletePanelButton.addEventListener("click", () => {
 
   undoStack.length = 0;
   redoStack.length = 0;
+  renderPagePreview();
 });
 
 movePanelLeftButton.addEventListener("click", () => {
@@ -411,6 +423,7 @@ movePanelLeftButton.addEventListener("click", () => {
   const activePanelButton = document.querySelector(".panel-item.active");
   const previousPanelButton = activePanelButton.previousElementSibling;
   panelList.insertBefore(activePanelButton, previousPanelButton);
+  renderPagePreview();
 });
 
 movePanelRightButton.addEventListener("click", () => {
@@ -427,6 +440,7 @@ movePanelRightButton.addEventListener("click", () => {
   const activePanelButton = document.querySelector(".panel-item.active");
   const nextPanelButton = activePanelButton.nextElementSibling;
   panelList.insertBefore(nextPanelButton, activePanelButton);
+  renderPagePreview();
 });
 
 // Page Listeners
@@ -513,6 +527,7 @@ pageList.addEventListener("click", (event) => {
   }
   undoStack.length = 0;
   redoStack.length = 0;
+  renderPagePreview();
 });
 
 deletePageButton.addEventListener("click", () => {
@@ -706,7 +721,6 @@ loadProjectButton.addEventListener("click", () => {
 });
 
 loadProjectFile.addEventListener("change", async () => {
-  console.log("FILE CHANGE FIRED!!!!!!!");
   const file = loadProjectFile.files[0];
 
   if (!file) {
@@ -773,6 +787,99 @@ loadProjectFile.addEventListener("change", async () => {
   undoStack.length = 0;
   redoStack.length = 0;
 });
+
+// Exporting Listeners
+
+exportPanelButton.addEventListener("click", () => {
+  const imageURL = canvas.toDataURL("image/png");
+
+  const downloadLink = document.createElement("a");
+
+  downloadLink.href = imageURL;
+  downloadLink.download = `sumiframe-page-${activePageId}-panel-${activePanelId}.png`;
+  downloadLink.click();
+});
+
+exportPageButton.addEventListener("click", () => {
+  renderPagePreview();
+
+  const currentPage = pages.find((page) => {
+    return page.id === activePageId;
+  });
+
+  const exportCanvas = document.createElement("canvas");
+  const exportCtx = exportCanvas.getContext("2d");
+  exportCanvas.width = 1200;
+  exportCanvas.height = 1600;
+
+  exportCtx.fillStyle = "White";
+  exportCtx.fillRect(0, 0, exportCanvas.width, exportCanvas.height);
+
+  function drawPanel(panel, x, y, width, height) {
+    const tempCanvas = document.createElement("canvas");
+    const tempCtx = tempCanvas.getContext("2d");
+
+    tempCanvas.width = canvas.width;
+    tempCanvas.height = canvas.height;
+    if (panel.canvasState !== null) {
+      tempCtx.putImageData(panel.canvasState, 0, 0);
+    }
+    exportCtx.drawImage(tempCanvas, x, y, width, height);
+    exportCtx.strokeRect(x, y, width, height);
+  }
+  const margin = 30;
+  const gap = 20;
+  const pageWidth = exportCanvas.width - margin * 2;
+  const pageHeight = exportCanvas.height - margin * 2;
+
+  const panelCount = currentPage.panels.length;
+  if (panelCount === 1) {
+    drawPanel(currentPage.panels[0], margin, margin, pageWidth, pageHeight);
+  } else if (panelCount === 2) {
+    const panelWidth = (pageWidth - gap) / 2;
+
+    drawPanel(
+      currentPage.panels[0],
+      margin + gap,
+      margin,
+      panelWidth,
+      pageHeight,
+    );
+    drawPanel(
+      currentPage.panels[1],
+      margin + panelWidth + gap,
+      margin,
+      panelWidth,
+      pageHeight,
+    );
+  } else if (panelCount === 3) {
+    const halfHeight = (pageHeight - gap) / 2;
+    const bottomWidth = (pageWidth - gap) / 2;
+
+    drawPanel(currentPage.panels[0], margin, margin, pageWidth, halfHeight);
+    drawPanel(
+      currentPage.panels[1],
+      margin,
+      margin + halfHeight + gap,
+      bottomWidth,
+      halfHeight,
+    );
+    drawPanel(
+      currentPage.panels[2],
+      margin + bottomWidth + gap,
+      margin + halfHeight + gap,
+      bottomWidth,
+      halfHeight,
+    );
+  }
+  const imageURL = exportCanvas.toDataURL("image/png");
+  const downloadLink = document.createElement("a");
+
+  downloadLink.href = imageURL;
+  downloadLink.download = `sumiframe-page${activePageId}.png`;
+  downloadLink.click();
+});
+
 // Footer Listeners
 
 undoButton.addEventListener("click", () => {
@@ -785,6 +892,7 @@ undoButton.addEventListener("click", () => {
 
   const previousState = undoStack.pop();
   ctx.putImageData(previousState, 0, 0);
+  renderPagePreview();
 });
 
 redoButton.addEventListener("click", () => {
@@ -797,12 +905,14 @@ redoButton.addEventListener("click", () => {
 
   const nextState = redoStack.pop();
   ctx.putImageData(nextState, 0, 0);
+  renderPagePreview();
 });
 
 clearCanvasButton.addEventListener("click", () => {
   saveState();
   redoStack.length = 0;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  renderPagePreview();
 });
 
 // Functions
@@ -812,3 +922,55 @@ function saveState() {
 
   undoStack.push(canvasState);
 }
+
+function renderPagePreview() {
+  pagePreview.innerHTML = "";
+
+  const currentPage = pages.find((page) => {
+    return page.id === activePageId;
+  });
+
+  const currentPanel = currentPage.panels.find((panel) => {
+    return panel.id === activePanelId;
+  });
+
+  if (currentPanel) {
+    currentPanel.canvasState = ctx.getImageData(
+      0,
+      0,
+      canvas.width,
+      canvas.height,
+    );
+  }
+  const previewPanelCount = currentPage.panels.length;
+  pagePreview.classList.remove("layout-1", "layout-2", "layout-3");
+
+  if (previewPanelCount === 1) {
+    pagePreview.classList.add("layout-1");
+  } else if (previewPanelCount === 2) {
+    pagePreview.classList.add("layout-2");
+  } else if (previewPanelCount === 3) {
+    pagePreview.classList.add("layout-3");
+  }
+  currentPage.panels.forEach((panel) => {
+    const previewPanel = document.createElement("div");
+
+    previewPanel.classList.add("preview-panel");
+    const previewCanvas = document.createElement("canvas");
+    const previewCtx = previewCanvas.getContext("2d");
+
+    previewCanvas.width = canvas.width;
+    previewCanvas.height = canvas.height;
+    previewCanvas.classList.add("preview-canvas");
+
+    if (panel.canvasState !== null) {
+      previewCtx.putImageData(panel.canvasState, 0, 0);
+    }
+    previewPanel.appendChild(previewCanvas);
+    pagePreview.appendChild(previewPanel);
+  });
+}
+
+// Calling/Initial Render
+
+renderPagePreview();
