@@ -70,6 +70,10 @@ const loadProjectFile = document.querySelector("#load-project-file");
 const exportPanelButton = document.querySelector("#export-panel");
 const exportPageButton = document.querySelector("#export-page");
 
+// Title
+
+const projectTitleInput = document.querySelector("#project-title");
+
 // Drawing Properties
 
 ctx.lineWidth = 5;
@@ -96,6 +100,7 @@ let referenceVisible = true;
 let referenceExists = false;
 let panelCount = 1;
 let activePanelId = 1;
+let projectTitle = "Untitled Project";
 
 let panels = [
   {
@@ -654,6 +659,7 @@ saveProjectButton.addEventListener("click", () => {
   currentPage.panelCount = panelCount;
 
   const projectData = {
+    projectTitle: projectTitle,
     activePageId: activePageId,
     pageCount: pageCount,
 
@@ -686,7 +692,11 @@ saveProjectButton.addEventListener("click", () => {
 
   const downloadLink = document.createElement("a");
   downloadLink.href = projectURL;
-  downloadLink.download = "sumiframe-project.json";
+  const safeProjectTitle = projectTitle
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, "-");
+  downloadLink.download = `${safeProjectTitle || "sumiframe-project"}.json`;
   downloadLink.click();
 
   URL.revokeObjectURL(projectURL);
@@ -729,6 +739,8 @@ loadProjectFile.addEventListener("change", async () => {
 
   const projectText = await file.text();
   const loadedProject = JSON.parse(projectText);
+  projectTitle = loadedProject.projectTitle;
+  projectTitleInput.value = projectTitle;
 
   for (const page of loadedProject.pages) {
     for (const panel of page.panels) {
@@ -796,7 +808,8 @@ exportPanelButton.addEventListener("click", () => {
   const downloadLink = document.createElement("a");
 
   downloadLink.href = imageURL;
-  downloadLink.download = `sumiframe-page-${activePageId}-panel-${activePanelId}.png`;
+  const safeProjectTitle = getSafeProjectTitle();
+  downloadLink.download = `${safeProjectTitle || "sumiframe"}-page-${activePageId}-panel-${activePanelId}.png`;
   downloadLink.click();
 });
 
@@ -838,13 +851,7 @@ exportPageButton.addEventListener("click", () => {
   } else if (panelCount === 2) {
     const panelWidth = (pageWidth - gap) / 2;
 
-    drawPanel(
-      currentPage.panels[0],
-      margin + gap,
-      margin,
-      panelWidth,
-      pageHeight,
-    );
+    drawPanel(currentPage.panels[0], margin, margin, panelWidth, pageHeight);
     drawPanel(
       currentPage.panels[1],
       margin + panelWidth + gap,
@@ -876,8 +883,15 @@ exportPageButton.addEventListener("click", () => {
   const downloadLink = document.createElement("a");
 
   downloadLink.href = imageURL;
-  downloadLink.download = `sumiframe-page${activePageId}.png`;
+  const safeProjectTitle = getSafeProjectTitle();
+  downloadLink.download = `${safeProjectTitle || "sumiframe"}-page-${activePageId}.png`;
   downloadLink.click();
+});
+
+// Title Listeners
+
+projectTitleInput.addEventListener("input", () => {
+  projectTitle = projectTitleInput.value;
 });
 
 // Footer Listeners
@@ -916,6 +930,16 @@ clearCanvasButton.addEventListener("click", () => {
 });
 
 // Functions
+
+function saveState() {
+  const canvasState = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+  undoStack.push(canvasState);
+}
+
+function getSafeProjectTitle() {
+  return projectTitle.trim().toLowerCase().replace(/\s+/g, "-");
+}
 
 function saveState() {
   const canvasState = ctx.getImageData(0, 0, canvas.width, canvas.height);
