@@ -58,6 +58,10 @@ const deletePageButton = document.querySelector("#delete-page");
 const movePageLeftButton = document.querySelector("#move-page-left");
 const movePageRightButton = document.querySelector("#move-page-right");
 const pagePreview = document.querySelector("#page-preview");
+const renamePanelButton = document.querySelector("#rename-panel");
+const renamePanelInput = document.querySelector("#rename-panel-input");
+const renamePageInput = document.querySelector("#rename-page-input");
+const renamePageButton = document.querySelector("#rename-page");
 
 // Saving and Loading
 
@@ -310,6 +314,9 @@ referenceTool.addEventListener("click", () => {
 // Panel Listeners
 
 addPanelButton.addEventListener("click", () => {
+  if (panels.length >= 3) {
+    return;
+  }
   const currentPanel = panels.find((panel) => {
     return panel.id === activePanelId;
   });
@@ -445,6 +452,24 @@ movePanelRightButton.addEventListener("click", () => {
   const activePanelButton = document.querySelector(".panel-item.active");
   const nextPanelButton = activePanelButton.nextElementSibling;
   panelList.insertBefore(nextPanelButton, activePanelButton);
+  renderPagePreview();
+});
+
+renamePanelButton.addEventListener("click", () => {
+  const currentPanel = panels.find((panel) => {
+    return panel.id === activePanelId;
+  });
+
+  const trimmedName = renamePanelInput.value.trim();
+
+  if (trimmedName === "") {
+    return;
+  }
+  currentPanel.name = trimmedName;
+
+  const activePanelButton = document.querySelector(".panel-item.active");
+  activePanelButton.textContent = trimmedName;
+  renamePanelButton.value = "";
   renderPagePreview();
 });
 
@@ -625,6 +650,23 @@ movePageRightButton.addEventListener("click", () => {
   const activePageButton = document.querySelector(".page-item.active");
   const nextPageButton = activePageButton.nextElementSibling;
   pageList.insertBefore(nextPageButton, activePageButton);
+});
+
+renamePageButton.addEventListener("click", () => {
+  const currentPage = pages.find((page) => {
+    return page.id === activePageId;
+  });
+  const trimmedName = renamePageInput.value.trim();
+
+  if (trimmed === "") {
+    return;
+  }
+  currentPage.name = trimmedName;
+  const activePageButton = document.querySelector(".page-item.active");
+  activePageButton.textContent = trimmedName;
+
+  renamePageInput.value();
+  renderPagePreview();
 });
 
 // Saving and Loading Listeners

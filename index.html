@@ -28,6 +28,7 @@
         <button id="eraser-tool">Eraser</button>
         <button id="text-tool">Text</button>
         <button id="reference-tool">Reference</button>
+        <p class="tools-note">More tools may come in future updates.</p>
       </section>
 
       <section class="workspace">
@@ -41,6 +42,12 @@
             <h3>PANELS</h3>
             <button id="add-panel">+ Add Panel</button>
             <button id="delete-panel">Delete Panel</button>
+            <input
+              type="text"
+              id="rename-panel-input"
+              placeholder="New panel name"
+            />
+            <button id="rename-panel">Rename Panel</button>
           </div>
 
           <div id="panel-list">
@@ -58,6 +65,12 @@
             <h3>PAGES</h3>
             <button id="add-page">+ Add Page</button>
             <button id="delete-page">Delete Page</button>
+            <input
+              type="text"
+              id="rename-page-input"
+              placeholder="New page name"
+            />
+            <button id="rename-page">Rename Page</button>
           </div>
 
           <div id="page-list">
@@ -181,6 +194,7 @@
       <input type="file" id="load-project-file" accept=".json" hidden />
       <button id="export-panel">Export Panel</button>
       <button id="export-page">Export Page</button>
+      <span class="app-version">SumiFrame v1.0</span>
     </footer>
   </body>
 </html>
