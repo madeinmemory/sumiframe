@@ -133,6 +133,8 @@ canvas.addEventListener("pointerdown", (event) => {
   if (currentTool === "text") {
     saveState();
     redoStack.length = 0;
+    ctx.globalCompositeOperation = "source-over";
+    ctx.globalAlpha = 1;
     ctx.font = `${textSize.value}px Arial`;
     ctx.fillStyle = textColor.value;
     ctx.textAlign = "center";
@@ -164,7 +166,6 @@ window.addEventListener("pointerup", () => {
 });
 
 canvas.addEventListener("pointermove", (event) => {
-  console.log("moving", isDrawing);
   if (isDrawing === false) {
     return;
   }
@@ -381,7 +382,6 @@ panelList.addEventListener("click", (event) => {
   }
   undoStack.length = 0;
   redoStack.length = 0;
-  console.log(activePanelId);
 });
 
 deletePanelButton.addEventListener("click", () => {
@@ -469,7 +469,7 @@ renamePanelButton.addEventListener("click", () => {
 
   const activePanelButton = document.querySelector(".panel-item.active");
   activePanelButton.textContent = trimmedName;
-  renamePanelButton.value = "";
+  renamePanelInput.value = "";
   renderPagePreview();
 });
 
@@ -608,7 +608,7 @@ deletePageButton.addEventListener("click", () => {
     return panel.id === activePanelId;
   });
 
-  ctx.clearRect(0, 0, canvas.width, canvas.length);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   if (nextPanel.canvasState !== null) {
     ctx.putImageData(nextPanel.canvasState, 0, 0);
@@ -658,14 +658,14 @@ renamePageButton.addEventListener("click", () => {
   });
   const trimmedName = renamePageInput.value.trim();
 
-  if (trimmed === "") {
+  if (trimmedName === "") {
     return;
   }
   currentPage.name = trimmedName;
   const activePageButton = document.querySelector(".page-item.active");
   activePageButton.textContent = trimmedName;
 
-  renamePageInput.value();
+  renamePageInput.value = "";
   renderPagePreview();
 });
 
@@ -840,6 +840,7 @@ loadProjectFile.addEventListener("change", async () => {
   }
   undoStack.length = 0;
   redoStack.length = 0;
+  renderPagePreview();
 });
 
 // Exporting Listeners
