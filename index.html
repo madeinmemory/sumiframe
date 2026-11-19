@@ -11,24 +11,75 @@
   </head>
 
   <body>
-    <header>
-      <h1>SumiFrame</h1>
-      <input
-        type="text"
-        id="project-title"
-        value="Untitled Project"
-        aria-label="Project title"
-      />
+    <header class="app-header">
+      <div class="header-brand">
+        <div class="brand-icon">S</div>
+
+        <div class="brand-text">
+          <h1>SumiFrame</h1>
+          <p>LIGHTWEIGHT DRAWING STUDIO</p>
+        </div>
+      </div>
+
+      <div class="header-project">
+        <label for="project-title">PROJECT</label>
+        <input
+          type="text"
+          id="project-title"
+          value="Untitled Project"
+          aria-label="Project title"
+        />
+      </div>
+
+      <div class="header-actions">
+        <button id="save-project">Save Project</button>
+        <button id="load-project">Load Project</button>
+        <input type="file" id="load-project-file" accept=".json" hidden />
+      </div>
     </header>
 
+    <div class="action-bar">
+      <div class="action-bar-left">
+        <button id="undo-button">↶ Undo</button>
+        <button id="redo-button">↷ Redo</button>
+        <button id="clear-canvas">Clear Canvas</button>
+      </div>
+
+      <div class="action-bar-center">
+        <span>Page 1 / Panel 1</span>
+      </div>
+
+      <div class="action-bar-right">
+        <button id="export-panel">Export Panel</button>
+        <button id="export-page">Export Page</button>
+      </div>
+    </div>
+
     <main>
-      <section class="tools">
+      <section class="tools" aria-label="Drawing tools">
         <h2>TOOLS</h2>
-        <button id="pen-tool" class="active">Pen</button>
-        <button id="eraser-tool">Eraser</button>
-        <button id="text-tool">Text</button>
-        <button id="reference-tool">Reference</button>
-        <p class="tools-note">More tools may come in future updates.</p>
+
+        <button id="pen-tool" class="active" type="button">
+          <span class="tool-icon" aria-hidden="true">✎</span>
+          <span>Pen</span>
+        </button>
+
+        <button id="eraser-tool" type="button">
+          <span class="tool-icon" aria-hidden="true">⌫</span>
+          <span>Eraser</span>
+        </button>
+
+        <button id="text-tool" type="button">
+          <span class="tool-icon" aria-hidden="true">T</span>
+          <span>Text</span>
+        </button>
+
+        <button id="reference-tool" type="button">
+          <span class="tool-icon" aria-hidden="true">▧</span>
+          <span>Reference</span>
+        </button>
+
+        <p class="tools-note">Use the canvas to draw</p>
       </section>
 
       <section class="workspace">
@@ -36,165 +87,168 @@
           <img id="reference-image" alt="" />
           <canvas id="drawing-canvas" width="600" height="700"></canvas>
         </div>
-
-        <div class="panel-section">
-          <div class="panel-header">
-            <h3>PANELS</h3>
-            <button id="add-panel">+ Add Panel</button>
-            <button id="delete-panel">Delete Panel</button>
-            <input
-              type="text"
-              id="rename-panel-input"
-              placeholder="New panel name"
-            />
-            <button id="rename-panel">Rename Panel</button>
-          </div>
-
-          <div id="panel-list">
-            <button class="panel-item active" data-panel-id="1">Panel 1</button>
-          </div>
-
-          <div class="panel-controls">
-            <button id="move-panel-left">← Move Left</button>
-            <button id="move-panel-right">Move Right →</button>
-          </div>
-        </div>
-
-        <div class="page-section">
-          <div class="page-header">
-            <h3>PAGES</h3>
-            <button id="add-page">+ Add Page</button>
-            <button id="delete-page">Delete Page</button>
-            <input
-              type="text"
-              id="rename-page-input"
-              placeholder="New page name"
-            />
-            <button id="rename-page">Rename Page</button>
-          </div>
-
-          <div id="page-list">
-            <button class="page-item active" data-page-id="1">Page 1</button>
-          </div>
-
-          <div class="page-controls">
-            <button id="move-page-left">← Move Left</button>
-            <button id="move-page-right">Move Right →</button>
-          </div>
-
-          <div class="page-preview-section">
-            <h3>PAGE PREVIEW</h3>
-
-            <div id="page-preview"></div>
-          </div>
-        </div>
       </section>
 
-      <section class="properties">
-        <h2>PROPERTIES</h2>
+      <aside class="right-sidebar">
+        <section class="properties">
+          <h2>PROPERTIES</h2>
 
-        <div id="pen-properties">
-          <div class="property-control">
-            <label for="brush-size"
-              >Brush Size: <span id="brush-size-value">5px</span></label
-            >
-            <input type="range" id="brush-size" min="1" max="50" value="5" />
+          <div id="pen-properties">
+            <div class="property-control">
+              <label for="brush-size">
+                Brush Size: <span id="brush-size-value">5px</span>
+              </label>
+              <input type="range" id="brush-size" min="1" max="50" value="5" />
+            </div>
+
+            <div class="property-control">
+              <label for="brush-color">Brush Color</label>
+              <input type="color" id="brush-color" value="#000000" />
+            </div>
+
+            <div class="property-control">
+              <label for="brush-opacity">
+                Opacity: <span id="brush-opacity-value">100%</span>
+              </label>
+              <input
+                type="range"
+                id="brush-opacity"
+                min="0"
+                max="100"
+                value="100"
+              />
+            </div>
           </div>
 
-          <div class="property-control">
-            <label for="brush-color">Brush Color</label>
-            <input type="color" id="brush-color" value="#000000" />
+          <div id="eraser-properties">
+            <div class="property-control">
+              <label for="eraser-size">
+                Eraser Size: <span id="eraser-size-value">20px</span>
+              </label>
+              <input
+                type="range"
+                id="eraser-size"
+                min="1"
+                max="100"
+                value="20"
+              />
+            </div>
           </div>
 
-          <div class="property-control">
-            <label for="brush-opacity"
-              >Opacity: <span id="brush-opacity-value">100%</span></label
-            >
-            <input
-              type="range"
-              id="brush-opacity"
-              min="0"
-              max="100"
-              value="100"
-            />
+          <div id="text-properties">
+            <div class="property-control">
+              <label for="text-size">
+                Text Size: <span id="text-size-value">24px</span>
+              </label>
+              <input type="range" id="text-size" min="10" max="72" value="24" />
+            </div>
+
+            <div class="property-control">
+              <label for="text-color">Text Color</label>
+              <input type="color" id="text-color" value="#000000" />
+            </div>
+
+            <div class="property-control">
+              <label for="text-content">Text</label>
+              <input
+                type="text"
+                id="text-content"
+                placeholder="Enter text..."
+              />
+            </div>
+
+            <p class="property-note">
+              Choose your text properties, then click anywhere on the canvas to
+              place your text.
+            </p>
+          </div>
+
+          <div id="reference-properties">
+            <div class="property-control">
+              <label for="reference-upload">Reference Image</label>
+              <input
+                type="file"
+                id="reference-upload"
+                accept="image/png, image/jpeg, image/webp"
+              />
+            </div>
+
+            <div class="property-control">
+              <label for="reference-opacity">
+                Reference Opacity:
+                <span id="reference-opacity-value">50%</span>
+              </label>
+              <input
+                type="range"
+                id="reference-opacity"
+                min="0"
+                max="100"
+                value="50"
+              />
+            </div>
+
+            <div class="property-control">
+              <button id="toggle-reference">No Reference</button>
+              <button id="remove-reference">Remove Reference</button>
+            </div>
+          </div>
+        </section>
+
+        <div class="sidebar-management">
+          <div class="panel-section">
+            <div class="panel-header">
+              <h3>PANELS</h3>
+              <button id="add-panel">+ Add Panel</button>
+              <button id="delete-panel">Delete Panel</button>
+              <input
+                type="text"
+                id="rename-panel-input"
+                placeholder="New panel name"
+              />
+              <button id="rename-panel">Rename Panel</button>
+            </div>
+
+            <div id="panel-list">
+              <button class="panel-item active" data-panel-id="1">
+                Panel 1
+              </button>
+            </div>
+
+            <div class="panel-controls">
+              <button id="move-panel-left">← Move Left</button>
+              <button id="move-panel-right">Move Right →</button>
+            </div>
+          </div>
+
+          <div class="page-section">
+            <div class="page-header">
+              <h3>PAGES</h3>
+              <button id="add-page">+ Add Page</button>
+              <button id="delete-page">Delete Page</button>
+              <input
+                type="text"
+                id="rename-page-input"
+                placeholder="New page name"
+              />
+              <button id="rename-page">Rename Page</button>
+            </div>
+
+            <div id="page-list">
+              <button class="page-item active" data-page-id="1">Page 1</button>
+            </div>
+
+            <div class="page-controls">
+              <button id="move-page-left">← Move Left</button>
+              <button id="move-page-right">Move Right →</button>
+            </div>
+
+            <div class="page-preview-section">
+              <h3>PAGE PREVIEW</h3>
+              <div id="page-preview"></div>
+            </div>
           </div>
         </div>
-
-        <div id="eraser-properties">
-          <div class="property-control">
-            <label for="eraser-size">
-              Eraser Size: <span id="eraser-size-value">20px</span>
-            </label>
-            <input type="range" id="eraser-size" min="1" max="100" value="20" />
-          </div>
-        </div>
-
-        <div id="text-properties">
-          <div class="property-control">
-            <label for="text-size"
-              >TextSize: <span id="text-size-value">24px</span></label
-            >
-            <input type="range" id="text-size" min="10" max="72" value="24" />
-          </div>
-
-          <div class="property-control">
-            <label for="text-color">Text Color</label>
-            <input type="color" id="text-color" value="#000000" />
-          </div>
-
-          <div class="property-control">
-            <label for="text-content">Text</label>
-            <input type="text" id="text-content" placeholder="Enter text..." />
-          </div>
-
-          <p class="property-note">
-            Choose your text properties, then click anywhere on the canvas to
-            place your text.
-          </p>
-        </div>
-
-        <div id="reference-properties">
-          <div class="property-control">
-            <label for="reference-upload">Reference Image</label>
-            <input
-              type="file"
-              id="reference-upload"
-              accept="image/png, image/jpeg, image/webp"
-            />
-          </div>
-
-          <div class="property-control">
-            <label for="reference-opacity"
-              >Reference Opacity:
-              <span id="reference-opacity-value">50%</span></label
-            >
-            <input
-              type="range"
-              id="reference-opacity"
-              min="0"
-              max="100"
-              value="50"
-            />
-          </div>
-
-          <div class="property-control">
-            <button id="toggle-reference">No Reference</button>
-            <button id="remove-reference">Remove Reference</button>
-          </div>
-        </div>
-      </section>
+      </aside>
     </main>
-
-    <footer>
-      <button id="undo-button">Undo</button>
-      <button id="redo-button">Redo</button>
-      <button id="clear-canvas">Clear Canvas</button>
-      <button id="save-project">Save Project</button>
-      <button id="load-project">Load Project</button>
-      <input type="file" id="load-project-file" accept=".json" hidden />
-      <button id="export-panel">Export Panel</button>
-      <button id="export-page">Export Page</button>
-      <span class="app-version">SumiFrame v1.0</span>
-    </footer>
   </body>
 </html>
