@@ -596,6 +596,43 @@ main {
   letter-spacing: 1.5px;
 }
 
+/* Sidebar Tabs */
+
+.sidebar-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.sidebar-tab {
+  padding: 10px 12px;
+  background-color: var(--dark-soft);
+  color: var(--muted-text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.sidebar-tab:hover {
+  background-color: #3b6654;
+  color: white;
+}
+
+.sidebar-tab.active {
+  background-color: var(--green);
+  color: var(--black);
+  border-color: var(--green);
+}
+
+.right-sidebar .sidebar-tab.active {
+  background-color: var(--green);
+  color: var(--black);
+  border-color: var(--green);
+}
+
 /* PANELS AND PAGES AREA */
 
 .sidebar-management {

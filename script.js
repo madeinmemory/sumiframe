@@ -62,6 +62,10 @@ const renamePanelButton = document.querySelector("#rename-panel");
 const renamePanelInput = document.querySelector("#rename-panel-input");
 const renamePageInput = document.querySelector("#rename-page-input");
 const renamePageButton = document.querySelector("#rename-page");
+const panelsTab = document.querySelector("#panels-tab");
+const pagesTab = document.querySelector("#pages-tab");
+const panelSection = document.querySelector(".panel-section");
+const pageSection = document.querySelector(".page-section");
 
 // Saving and Loading
 
@@ -473,6 +477,13 @@ renamePanelButton.addEventListener("click", () => {
   renderPagePreview();
 });
 
+panelsTab.addEventListener("click", () => {
+  pageSection.style.display = "none";
+  panelSection.style.display = "block";
+  panelsTab.classList.add("active");
+  pagesTab.classList.remove("active");
+});
+
 // Page Listeners
 
 addPageButton.addEventListener("click", () => {
@@ -667,6 +678,13 @@ renamePageButton.addEventListener("click", () => {
 
   renamePageInput.value = "";
   renderPagePreview();
+});
+
+pagesTab.addEventListener("click", () => {
+  pageSection.style.display = "block";
+  panelSection.style.display = "none";
+  panelsTab.classList.remove("active");
+  pagesTab.classList.add("active");
 });
 
 // Saving and Loading Listeners
