@@ -48,13 +48,11 @@ This was the original interface before the redesign.
 
 ### Current Version
 
-Current Interface after the Redesign.
+The updated interface after the redesign.
 
 ![Current SumiFrame](screenshots/sumiframe-after1.png)
 
-### Current Version
-
-Current Interface after the Redesign.
+Another view of the updated workspace.
 
 ![Current SumiFrame](screenshots/sumiframe-after2.png)
 
@@ -65,28 +63,6 @@ Current Interface after the Redesign.
 - JavaScript
 - HTML Canvas API
 - Figma / Figma AI
-
-## What I Learned
-
-Building SumiFrame gave me more practice with:
-
-- Managing application data using arrays and objects
-- Working with the HTML Canvas API
-- Updating the interface with JavaScript
-- Creating and managing DOM elements
-- Event listeners and event delegation
-- Undo and redo functionality
-- Saving and loading data with JSON
-- Exporting images from the browser
-- Using CSS Grid and Flexbox
-- Working from a Figma mockup
-- Updating an existing interface without breaking its functionality
-
-## Project Status
-
-SumiFrame v1.0 is complete.
-
-I may come back to add more drawing tools, page layouts, and other improvements in the future.
 
 ## Running Locally
 
