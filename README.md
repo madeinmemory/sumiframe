@@ -4,6 +4,14 @@ SumiFrame is a browser-based manga and storyboard editor I built using HTML, CSS
 
 I wanted to create a simple workspace where users could draw, organize panels, manage pages, and save their projects without needing to install anything.
 
+## Project Status
+
+SumiFrame v1.0 is complete.
+
+SumiFrame is currently designed for desktop browsers, where there's more room for drawing tools, panels, and page management.
+
+Mobile and touchscreen support may be added in a future update, along with additional drawing tools and other improvements.
+
 ## Features
 
 - Pen, eraser, and text tools
@@ -38,15 +46,15 @@ This was the original interface before the redesign.
 
 ![Original SumiFrame](screenshots/sumiframe-before.png)
 
-### Second Version
+### Current Version
 
-An earlier version of the updated interface.
+Current Interface after the Redesign.
 
-![SumiFrame second version](screenshots/sumiframe-after1.png)
+![Current SumiFrame](screenshots/sumiframe-after1.png)
 
 ### Current Version
 
-The current interface with the updated layout, tools, and sidebar.
+Current Interface after the Redesign.
 
 ![Current SumiFrame](screenshots/sumiframe-after2.png)
 
